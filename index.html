@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITAFOS · Dossier de Inversión · Mayo 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0a1410; --bg2:#0e1a14; --bg3:#142820; --card:#11211a;
+  --line:#1f3a2e; --text:#e8f3ec; --muted:#88a397;
+  --accent:#22c55e; --accent2:#86efac; --green:#22c55e; --red:#ef4444;
+  --blue:#3b82f6; --purple:#a855f7; --yellow:#eab308; --pink:#ec4899; --cyan:#06b6d4; --brown:#b08968;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;font-size:15px}
+.container{max-width:1320px;margin:0 auto;padding:24px}
+header{background:linear-gradient(135deg,#0f2418 0%,#0a1410 60%);border-bottom:2px solid var(--accent);padding:36px 0 28px}
+header .container{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:18px}
+.brand{display:flex;align-items:center;gap:18px}
+.logo{width:64px;height:64px;background:linear-gradient(135deg,#22c55e,#86efac);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:26px;color:#0a1410;box-shadow:0 6px 24px rgba(34,197,94,.35)}
+h1{font-size:30px;font-weight:800;letter-spacing:-.5px}
+.subtitle{color:var(--muted);font-size:14px;margin-top:4px}
+.live{display:flex;gap:14px;flex-wrap:wrap}
+.live-item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:13px}
+.live-item .v{color:var(--accent2);font-weight:700;font-size:16px}
+.live-item.green .v{color:var(--green)}
+.live-item.red .v{color:var(--red)}
+.live-item .usd{font-size:11px;color:var(--muted);font-weight:500}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(10,20,16,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.tab{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s;font-family:inherit}
+.tab:hover{border-color:var(--accent);color:var(--text);transform:translateY(-1px)}
+.tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a1410;border-color:var(--accent)}
+
+section{display:none;padding:36px 0;animation:fade .4s}
+section.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+h2{font-size:24px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+h2::before{content:"";width:5px;height:26px;background:var(--accent);border-radius:3px}
+h3{font-size:18px;font-weight:700;margin:22px 0 10px;color:var(--accent2)}
+h4{font-size:15px;font-weight:700;margin:14px 0 6px;color:var(--text)}
+p{margin-bottom:10px;color:#cde0d5}
+.lead{font-size:15px;color:var(--muted);margin-bottom:24px;max-width:980px}
+
+.grid{display:grid;gap:18px}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;transition:all .2s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card.accent{border-left:4px solid var(--accent)}
+.card.green{border-left:4px solid var(--green)}
+.card.red{border-left:4px solid var(--red)}
+.card.blue{border-left:4px solid var(--blue)}
+.card.purple{border-left:4px solid var(--purple)}
+.card.yellow{border-left:4px solid var(--yellow)}
+.card.cyan{border-left:4px solid var(--cyan)}
+.card.pink{border-left:4px solid var(--pink)}
+.card.brown{border-left:4px solid var(--brown)}
+
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;text-align:center}
+.kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.kpi .value{font-size:22px;font-weight:800;color:var(--accent2)}
+.kpi .usd{font-size:12px;color:var(--muted);margin-top:2px;font-weight:600}
+.kpi .delta{font-size:12px;margin-top:6px}
+.kpi .delta.up{color:var(--green)}
+.kpi .delta.down{color:var(--red)}
+
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--bg3);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+tr:hover td{background:rgba(34,197,94,.04)}
+td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td .usd-inline{display:block;font-size:11px;color:var(--muted);font-weight:500}
+.tag{display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.tag.green{background:rgba(34,197,94,.18);color:#4ade80}
+.tag.red{background:rgba(239,68,68,.18);color:#f87171}
+.tag.yellow{background:rgba(234,179,8,.18);color:#facc15}
+.tag.blue{background:rgba(59,130,246,.18);color:#60a5fa}
+.tag.orange{background:rgba(255,122,26,.18);color:#ffb347}
+.tag.purple{background:rgba(168,85,247,.18);color:#c084fc}
+
+.chart-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin:18px 0;height:420px;position:relative}
+.chart-box.tall{height:480px}
+.chart-box canvas{max-height:380px}
+
+.tf-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;justify-content:center}
+.tf-btn{background:var(--bg3);border:1px solid var(--line);color:var(--muted);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s}
+.tf-btn:hover{color:var(--text);border-color:var(--accent)}
+.tf-btn.active{background:var(--accent);color:#0a1410;border-color:var(--accent)}
+
+.alert{background:rgba(34,197,94,.08);border:1px solid var(--accent);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px}
+.alert.green{background:rgba(34,197,94,.08);border-color:var(--green)}
+.alert.red{background:rgba(239,68,68,.08);border-color:var(--red)}
+.alert.blue{background:rgba(59,130,246,.08);border-color:var(--blue)}
+.alert.purple{background:rgba(168,85,247,.08);border-color:var(--purple)}
+.alert.yellow{background:rgba(234,179,8,.08);border-color:var(--yellow)}
+.alert strong{color:var(--accent2)}
+.alert.green strong{color:#4ade80}
+.alert.red strong{color:#f87171}
+.alert.blue strong{color:#60a5fa}
+.alert.purple strong{color:#c084fc}
+.alert.yellow strong{color:#facc15}
+
+ul.bul{list-style:none;padding-left:0}
+ul.bul li{padding:6px 0 6px 22px;position:relative;color:#cde0d5}
+ul.bul li::before{content:"▸";position:absolute;left:0;color:var(--accent);font-weight:bold}
+
+.score-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin:6px 0;flex:1}
+.score-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .8s}
+.score-row{display:flex;align-items:center;gap:12px}
+.score-num{font-weight:800;color:var(--accent2);min-width:48px;text-align:right}
+
+.metric-card{background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:16px;margin:10px 0}
+.metric-card .head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.metric-card .name{font-weight:700;color:var(--text);font-size:15px}
+.metric-card .val{font-size:18px;font-weight:800;color:var(--accent2);font-variant-numeric:tabular-nums}
+.metric-card .desc{font-size:12px;color:var(--muted);margin:6px 0}
+.metric-card .state{font-size:13px;color:#cde0d5;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)}
+
+.timeline{position:relative;padding-left:24px;margin:20px 0}
+.timeline::before{content:"";position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--line)}
+.tl-item{position:relative;padding:8px 0 14px}
+.tl-item::before{content:"";position:absolute;left:-22px;top:14px;width:12px;height:12px;background:var(--accent);border-radius:50%;border:3px solid var(--bg)}
+.tl-date{font-size:12px;color:var(--accent2);font-weight:700}
+.tl-title{font-weight:700;margin:2px 0;color:var(--text)}
+.tl-desc{font-size:13px;color:var(--muted)}
+
+footer{border-top:1px solid var(--line);padding:30px 0;margin-top:50px;text-align:center;color:var(--muted);font-size:12px}
+footer a{color:var(--accent2);text-decoration:none}
+.disclaimer{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:14px 18px;margin:20px 0;font-size:12px;color:#cde0d5}
+
+.fx-banner{background:linear-gradient(90deg,rgba(34,197,94,.1),rgba(59,130,246,.1));border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:16px 0;font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.fx-banner strong{color:var(--accent2)}
+
+@media(max-width:720px){
+  h1{font-size:22px}.tab{padding:8px 12px;font-size:12px}
+  .live-item{font-size:11px;padding:6px 10px}
+  header .container{align-items:flex-start}
+  .chart-box{height:340px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="brand">
+      <div class="logo">IF</div>
+      <div>
+        <h1>ITAFOS · Dossier de Inversión v1.0</h1>
+        <div class="subtitle">TSXV:IFOS · Fertilizantes fosfatados · Análisis fundamental, técnico y tesis · Actualizado 12 mayo 2026</div>
+      </div>
+    </div>
+    <div class="live">
+      <div class="live-item"><div style="font-size:10px;color:var(--muted)">PRECIO</div><div class="v">2,67 C$</div><div class="usd">≈ 1,95 USD</div></div>
+      <div class="live-item red"><div style="font-size:10px;color:var(--muted)">POST-Q1</div><div class="v">-17%</div><div class="usd">desde 4 May</div></div>
+      <div class="live-item"><div style="font-size:10px;color:var(--muted)">MKT CAP</div><div class="v">520 M C$</div><div class="usd">≈ 380 M USD</div></div>
+      <div class="live-item green"><div style="font-size:10px;color:var(--muted)">TARGET MEDIO</div><div class="v">4,50 C$</div><div class="usd">≈ 3,29 USD (+68,5%)</div></div>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" data-tab="empresa">1 · La Empresa</button>
+      <button class="tab" data-tab="negocio">2 · Negocio & Operaciones</button>
+      <button class="tab" data-tab="catalizador">3 · Tesis Corto · Recovery Margen</button>
+      <button class="tab" data-tab="macro">4 · Fosfato & Macro Agri</button>
+      <button class="tab" data-tab="fundamental">5 · Fundamental</button>
+      <button class="tab" data-tab="tecnico">6 · Técnico</button>
+      <button class="tab" data-tab="tesis">7 · Tesis de Inversión</button>
+      <button class="tab" data-tab="timing">8 · Timing & Niveles</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+<div class="fx-banner">
+  <span>💱 <strong>USD/CAD utilizado:</strong> 1,367 C$ por dólar (a 12 May 2026)</span>
+  <span>Stock cotiza en CAD; resultados financieros se reportan en USD · ambas monedas mostradas</span>
+</div>
+
+<!-- ================ 1 EMPRESA ================ -->
+<section id="empresa" class="active">
+  <h2>¿Quién es ITAFOS?</h2>
+  <p class="lead">Itafos Inc. (TSXV:IFOS) es un <strong>productor integrado de fertilizantes fosfatados y de especialidad</strong> con sede en Houston (Texas) y registro corporativo en Toronto. Cotiza en TSX Venture Exchange. Opera principalmente desde el complejo Conda (Idaho, EE.UU.) — uno de los pocos productores domésticos americanos de fertilizantes fosfatados — y mantiene activos en Brasil (Arraias) y un proyecto de clase mundial sin desarrollar en Guinea-Bissau (Farim). Su accionista de referencia es <strong>CL Fertilizers Holding LLC</strong>, afiliada a Castlelake L.P. (private equity con ~25 mil M$ AUM).</p>
+
+  <div class="grid grid-4">
+    <div class="kpi"><div class="label">Sede operativa</div><div class="value" style="font-size:16px">Houston, TX (EEUU)</div><div class="usd">Corporativo: Toronto, Canadá</div></div>
+    <div class="kpi"><div class="label">Fundación</div><div class="value">1999</div><div class="delta">Como MBAC Fertilizer · Itafos desde 2016</div></div>
+    <div class="kpi"><div class="label">CEO</div><div class="value" style="font-size:16px">David Delaney</div><div class="delta">Desde 2020 · ex-Mosaic</div></div>
+    <div class="kpi"><div class="label">Empleados</div><div class="value">≈ 700</div><div class="delta">Mayormente en Conda (Idaho)</div></div>
+  </div>
+
+  <h3>Historia · de MBAC Fertilizer a Itafos</h3>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">1999</div><div class="tl-title">Nace MBAC Fertilizer en Toronto</div><div class="tl-desc">Fundada por Peter J. Marrone (también fundador de Yamana Gold) y Antenor F. Silva Jr. con la tesis de que la demanda global de fosfatos en Brasil/LatAm justificaba un nuevo player integrado verticalmente. Foco inicial: yacimientos brasileños.</div></div>
+    <div class="tl-item"><div class="tl-date">2010-2013</div><div class="tl-title">Construcción del complejo Arraias (Brasil)</div><div class="tl-desc">Mina + planta de ácido sulfúrico + planta de SSP (superfosfato simple). Capex ~360 M$. Lanzamiento operativo 2013 con dificultades técnicas y geológicas (rendimientos por debajo de proyección).</div></div>
+    <div class="tl-item"><div class="tl-date">2014-2016</div><div class="tl-title">Crisis financiera · reestructuración</div><div class="tl-desc">Caída del precio del fosfato + sobre-apalancamiento + costes operativos elevados en Arraias llevan a MBAC al borde del default. Suspensión de SSP, recapitalización forzada.</div></div>
+    <div class="tl-item"><div class="tl-date">Diciembre 2016</div><div class="tl-title">Rebranding a Itafos Inc.</div><div class="tl-desc">Nuevo nombre, nueva gobernanza. Castlelake (private equity) entra como accionista de control vía CL Fertilizers Holding. Estrategia: estabilizar Brasil, buscar adquisición transformadora en EE.UU.</div></div>
+    <div class="tl-item"><div class="tl-date">12 Enero 2018</div><div class="tl-title">Adquisición del complejo Conda (Idaho) — la operación que cambió la empresa</div><div class="tl-desc">Itafos compra a <strong>Agrium</strong> (hoy Nutrien) las operaciones de Conda Phosphate Operations por <strong>~100 M$</strong>. Un complejo verticalmente integrado de minería + fábrica de MAP + ácido sulfúrico + ácido superfosfórico (SPA). Catapulta a Itafos a ~1 M tn/año de capacidad y al mapa de productores fosfatados americanos.</div></div>
+    <div class="tl-item"><div class="tl-date">2018-2019</div><div class="tl-title">Integración Conda · turnaround</div><div class="tl-desc">Conda alcanza rentabilidad rápidamente bajo Itafos. Arraias sigue siendo problemática. Suspensión definitiva (temporal) de SSP en Arraias para focalizar inversiones en Idaho.</div></div>
+    <div class="tl-item"><div class="tl-date">2020</div><div class="tl-title">David Delaney asume CEO · plan de desapalancamiento</div><div class="tl-desc">Veterano del sector (ex Mosaic, ex CF Industries). Anuncia plan para eliminar +150 M$ de deuda. Hoy esa meta está cumplida: net leverage ratio ~0,1-0,3x es uno de los mejores del sector.</div></div>
+    <div class="tl-item"><div class="tl-date">2022</div><div class="tl-title">Récord histórico de ingresos: 593 M$ · pico cíclico</div><div class="tl-desc">El shock energético post-invasión Ucrania dispara los precios del fosfato. Itafos genera 219 M$ EBITDA con margen operativo del 31%. Cash flow récord permite acelerar inversiones.</div></div>
+    <div class="tl-item"><div class="tl-date">2023</div><div class="tl-title">Año de transición · normalización de precios</div><div class="tl-desc">Revenue cae a 466 M$, net income negativo (-63 M$) por write-offs y normalización de precios. Mercado castiga, pero balance sigue limpio.</div></div>
+    <div class="tl-item"><div class="tl-date">2024-2025</div><div class="tl-title">Ejecución sólida · récord de producción Conda + Arraias</div><div class="tl-desc">Récord histórico de producción en ambos sites. FY25: 558 M$ revenue (+14%) · 159 M$ adj EBITDA · 116 M$ net income. Net leverage 0,1x — virtualmente sin deuda neta.</div></div>
+    <div class="tl-item"><div class="tl-date">Febrero 2026</div><div class="tl-title">PEA actualizado del proyecto Arraias publicado</div><div class="tl-desc">Filing del informe técnico NI 43-101 con la evaluación económica preliminar actualizada del proyecto Arraias. Reafirma el potencial fosfato del activo brasileño.</div></div>
+    <div class="tl-item"><div class="tl-date">Marzo 2026</div><div class="tl-title">Stock toca 4,67 C$ (52w high)</div><div class="tl-desc">Pico de la fase alcista. Múltiplos baratos + dividend yield 6% + producción récord atraen flujos.</div></div>
+    <div class="tl-item"><div class="tl-date">29 Abril 2026</div><div class="tl-title">Resultados Q1 2026 publicados · revenue +5%, EBITDA -53%, NI -95%</div><div class="tl-desc">Sales 142,2 M$ (+5% YoY), pero costes de materias primas (azufre, ácido sulfúrico) disparados. Adj EBITDA cae a 18,4 M$ desde 39,3 M$. Net income 1,7 M$ desde 35,9 M$. CEO confirma que las cláusulas de pricing de contratos LP reflejarán los costes en próximos trimestres → recovery esperado H2 2026.</div></div>
+    <div class="tl-item"><div class="tl-date">5 Mayo 2026</div><div class="tl-title">Caída del -17% post-earnings · downgrade Raymond James</div><div class="tl-desc">Raymond James baja de "Strong Buy" a "Outperform" citando coste de materia prima. Stock pasa de ~3,80 C$ a 2,67 C$. RSI(14) cae a 28 (sobrevendido).</div></div>
+    <div class="tl-item"><div class="tl-date">12 Mayo 2026 <span class="tag green">HOY</span></div><div class="tl-title">Spot 2,67 C$ · oportunidad de entrada potencial</div><div class="tl-desc">Mercado descuenta agresivamente un trimestre cíclico. Balance limpio (deuda neta ~38 M$), dividendo 7,12% yield, P/E 4,5x. Asimetría favorable si la tesis de recovery se cumple.</div></div>
+  </div>
+
+  <h3>Accionariado y gobernanza</h3>
+  <table>
+    <thead><tr><th>Accionista</th><th>% aproximado</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td><strong>CL Fertilizers Holding LLC</strong> (Castlelake)</td><td class="num">~64%</td><td>Accionista controlador desde 2017 · derecho de nominación de consejeros · alineado LP</td></tr>
+      <tr><td>Institucionales (otros fondos)</td><td class="num">~10-12%</td><td>Algunos value managers norteamericanos especializados en small/mid cap</td></tr>
+      <tr><td>Insiders directivos / consejo</td><td class="num">~2-3%</td><td>Compras netas insiders +224k C$ últimos 12 meses (alineamiento positivo)</td></tr>
+      <tr><td>Retail y otros</td><td class="num">~22-24%</td><td>Float reducido — explica volatilidad amplificada</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--muted)">⚠️ <strong>Float bajo</strong> (~70M acciones de las 194,8M totales no controladas por Castlelake) implica menor liquidez y mayor amplitud en movimientos de precio que un peer mid-cap promedio.</p>
+
+  <h3>Activos operativos · vista general</h3>
+  <div class="grid grid-3">
+    <div class="card accent">
+      <h4>🇺🇸 Conda (Idaho, EE.UU.)</h4>
+      <p style="font-size:13px;color:var(--muted)">El "core asset". Complejo integrado de minería + planta de ácido sulfúrico + MAP + ácido superfosfórico (SPA). Producción ~350k tn P2O5/año. <strong>~90-95% del EBITDA del grupo</strong>. Adquirido a Agrium (Nutrien) en 2018 por 100 M$.</p>
+    </div>
+    <div class="card green">
+      <h4>🇧🇷 Arraias (Tocantins, Brasil)</h4>
+      <p style="font-size:13px;color:var(--muted)">Mina + planta de ácido sulfúrico. SSP suspendido temporalmente; planeado reinicio en 2027. EBITDA 2025: 13,3 M$ (vs 4,3 M$ en 2024). PEA actualizado publicado en feb 2026.</p>
+    </div>
+    <div class="card blue">
+      <h4>🇬🇼 Farim (Guinea-Bissau)</h4>
+      <p style="font-size:13px;color:var(--muted)">Proyecto de desarrollo greenfield. PEA estima 14 años de vida de mina. Programa de perforación estratégica programado para H1 2026 + ingeniería de un proyecto fasado. <strong>Opcionalidad de largo plazo</strong>.</p>
+    </div>
+    <div class="card yellow">
+      <h4>🇧🇷 Santana (Pará, Brasil)</h4>
+      <p style="font-size:13px;color:var(--muted)">Proyecto de exploración temprana. Recursos potenciales pero sin plan de desarrollo activo. Reserva estratégica de tierra mineral.</p>
+    </div>
+    <div class="card cyan">
+      <h4>Productos</h4>
+      <p style="font-size:13px;color:var(--muted)">MAP (monoammonium phosphate), MAP+, SPA (superphosphoric acid), ácido sulfúrico, ácido fosfórico, fertilizantes especializados, productos micronutrientes.</p>
+    </div>
+    <div class="card purple">
+      <h4>Modelo comercial</h4>
+      <p style="font-size:13px;color:var(--muted)">~60% contratos de largo plazo (con cláusulas de pass-through parciales de coste materia prima — clave para entender el desfase Q1 2026). ~40% spot.</p>
+    </div>
+  </div>
+
+  <div class="alert green" style="margin-top:20px">
+    <strong>Tesis en una línea:</strong> Productor doméstico americano de fertilizante fosfatado, balance neto sin deuda (38 M$ deuda neta), dividend yield 7,1%, P/E 4,5x, post-corrección del -43% desde máximo 52w (4,67 → 2,67 C$) tras un Q1 cíclico explicable. <strong>Asimetría clásica</strong>: catalizador binario en Q2-Q3 2026 cuando las cláusulas de pricing de contratos LP empiecen a reflejar costes actuales.
+  </div>
+</section>
+
+<!-- ================ 2 NEGOCIO ================ -->
+<section id="negocio">
+  <h2>Negocio, Operaciones y Solvencia de Activos</h2>
+  <p class="lead">Itafos es uno de los <strong>tres únicos productores domésticos de fertilizante fosfatado en EE.UU.</strong> (junto con Mosaic y Nutrien), pero con una capitalización 50-100x menor. Esta posición estructural — escasez de capacidad doméstica + barreras de entrada por permisos ambientales + ciclo capex 5-7 años — es la razón principal por la que un competidor estratégico podría querer adquirirla.</p>
+
+  <h3>Mix de ingresos FY 2025 (% del total · 558 M USD ≈ 763 M C$)</h3>
+  <div class="chart-box"><canvas id="mixChart"></canvas></div>
+
+  <h3>Activos · "solvencia operativa" por sitio</h3>
+  <table>
+    <thead><tr><th>Activo</th><th>País</th><th>Estado</th><th class="num">EBITDA 2025 (USD)</th><th>Tendencia</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Conda Phosphate Operations</strong></td><td>🇺🇸 Idaho</td><td><span class="tag green">Operativo · récord 2025</span></td><td class="num">~145-150 M$ <span class="usd-inline">≈ 198-205 M C$</span></td><td>↗ producción MAP máxima histórica</td></tr>
+      <tr><td><strong>Arraias</strong></td><td>🇧🇷 Tocantins</td><td><span class="tag yellow">Operativo parcial</span></td><td class="num">13,3 M$ <span class="usd-inline">≈ 18,2 M C$</span></td><td>↗ +209% YoY (margen ácido sulfúrico)</td></tr>
+      <tr><td><strong>Farim Project</strong></td><td>🇬🇼 Guinea-Bissau</td><td><span class="tag blue">Pre-development</span></td><td class="num">— (sin ingresos)</td><td>Perforación estratégica H1 2026</td></tr>
+      <tr><td><strong>Santana Project</strong></td><td>🇧🇷 Pará</td><td><span class="tag blue">Exploración</span></td><td class="num">— (sin ingresos)</td><td>→ reserva estratégica</td></tr>
+      <tr><td><strong>Corporate / SG&amp;A</strong></td><td>—</td><td>—</td><td class="num">~(16-20) M$ <span class="usd-inline">costes corporativos</span></td><td>→ controlado</td></tr>
+      <tr style="background:rgba(34,197,94,.08)"><td><strong>TOTAL CONSOLIDADO 2025</strong></td><td>—</td><td>—</td><td class="num"><strong>158,7 M$ Adj EBITDA</strong></td><td><strong>↘ -1% vs 2024 (cost-driven)</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Detalle Conda · el corazón del negocio</h3>
+  <div class="grid grid-2">
+    <div class="card accent">
+      <h4>Por qué Conda es especial</h4>
+      <ul class="bul">
+        <li><strong>Integración vertical completa</strong>: mina captiva + ácido sulfúrico onsite + fábrica de MAP. Reduce dependencia de proveedores externos.</li>
+        <li><strong>Producto premium</strong>: ácido superfosfórico (SPA) de alta pureza demandado por industria de fertilizantes líquidos y alimentación animal. Markup ~30-50% vs MAP commodity.</li>
+        <li><strong>Ubicación geográfica</strong>: Idaho/Wyoming, sirve al mercado norteamericano sin coste logístico transatlántico que sí tienen los importadores marroquíes/rusos.</li>
+        <li><strong>Reserves mineras &gt; 20 años</strong> de vida útil documentada.</li>
+        <li><strong>Permiso ambiental EPA</strong> en vigor — barrera de entrada significativa para nuevos competidores.</li>
+      </ul>
+    </div>
+    <div class="card yellow">
+      <h4>Riesgos Conda</h4>
+      <ul class="bul">
+        <li><strong>Coste de materia prima (azufre + ácido sulfúrico)</strong>: el shock 2026 ha disparado el coste 30-50% (Q1 = drag de EBITDA).</li>
+        <li><strong>Permisos H1/NDR mine</strong>: el desarrollo de la nueva veta H1/NDR alcanzó mechanical completion en Q3 2025. Ramp-up operativo en curso.</li>
+        <li><strong>Pasivos ambientales históricos (ARO)</strong>: el complejo Conda tiene legacy environmental liabilities. Pagos 25-30 M$/año previstos en 2026.</li>
+        <li><strong>Workforce concentration</strong>: ~700 empleados, mayoría sindicalizada. Riesgo laboral local.</li>
+        <li><strong>Cláusulas de pricing LP</strong>: contratos con clientes incluyen referencias a precios históricos (4-6 trimestres atrás), de ahí el desfase observado en Q1 2026.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert blue">
+    <strong>Lectura del modelo:</strong> Itafos opera como un <em>cost-pass-through delayed business</em>. Cuando los costes de input suben rápido, los márgenes se comprimen <em>antes</em> de que los contratos puedan reflejarlos. Cuando los costes se estabilizan o caen, los márgenes <em>se expanden</em> mientras los contratos LP todavía reflejan los costes altos pasados. El Q1 2026 está en la peor fase del ciclo; los Q3-Q4 2026 (e idealmente FY 2027) deberían ver lo contrario.
+  </div>
+
+  <h3>Evolución ingresos anuales (M USD) — con equivalente en CAD en tooltip</h3>
+  <div class="chart-box"><canvas id="revChart"></canvas></div>
+
+  <h3>Ciclos del fosfato · histórico</h3>
+  <table>
+    <thead><tr><th>Año</th><th class="num">Precio MAP fob NOLA (USD/tn)</th><th>Contexto</th><th>Itafos Revenue (M$)</th></tr></thead>
+    <tbody>
+      <tr><td>2018</td><td class="num">~380</td><td>Adquisición Conda · ciclo normalizado</td><td class="num">~400</td></tr>
+      <tr><td>2019</td><td class="num">~340</td><td>Sobreoferta · margen presionado</td><td class="num">~340</td></tr>
+      <tr><td>2020</td><td class="num">~360</td><td>COVID · demanda agri sólida</td><td class="num">~360</td></tr>
+      <tr><td>2021</td><td class="num">~620</td><td>Squeeze post-COVID · sanciones China</td><td class="num">413</td></tr>
+      <tr><td>2022</td><td class="num">~840 (pico)</td><td>Ucrania · explosión precios fertilizante</td><td class="num">593 (récord)</td></tr>
+      <tr><td>2023</td><td class="num">~530</td><td>Normalización · caída margen</td><td class="num">466 (-21%)</td></tr>
+      <tr><td>2024</td><td class="num">~610</td><td>Re-tensión por demanda estructural</td><td class="num">491 (+6%)</td></tr>
+      <tr><td>2025</td><td class="num">~670</td><td>Costes input al alza pero precio fertilizante absorbiendo</td><td class="num">558 (+14%)</td></tr>
+      <tr><td>2026 (Q1 anualiz.)</td><td class="num">~720</td><td>Costes input pico · margen comprimido transitoriamente</td><td class="num">~570-600 (E)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================ 3 TESIS CORTO ================ -->
+<section id="catalizador">
+  <h2>Tesis a Corto Plazo · Recovery del Margen H2 2026</h2>
+  <p class="lead">El catalizador no es un evento puntual (lanzamiento de producto), es una <strong>recuperación cíclica programada</strong> en los próximos 2-3 trimestres. La caída del -17% del 5 mayo descuenta agresivamente un único trimestre malo — pero la mecánica contractual implica que ese trimestre malo es <em>matemáticamente</em> seguido de trimestres mejores en cuanto las cláusulas de pricing se actualicen.</p>
+
+  <div class="grid grid-4">
+    <div class="kpi"><div class="label">Q1 2026 Adj EBITDA</div><div class="value">18,4 M$</div><div class="delta down">≈ 25,2 M C$ · -53% YoY</div></div>
+    <div class="kpi"><div class="label">Guidance 2026 ventas</div><div class="value">335-355k tn</div><div class="delta">P2O5 · en línea con 2025</div></div>
+    <div class="kpi"><div class="label">Net leverage</div><div class="value">0,3x</div><div class="delta up">vs ~3x de peers · ventaja competitiva</div></div>
+    <div class="kpi"><div class="label">Dividend yield</div><div class="value">7,12%</div><div class="delta up">Pagado · sostenible al ratio actual</div></div>
+  </div>
+
+  <div class="grid grid-3" style="margin-top:18px">
+    <div class="card green">
+      <h3>Tailwinds (vientos a favor)</h3>
+      <ul class="bul">
+        <li>Cláusulas de pricing LP empezarán a reflejar costes altos en Q2-Q3 2026 → expansión de margen mecánica</li>
+        <li>Récord histórico de producción en Conda (MAP) — escalabilidad demostrada</li>
+        <li>Demanda fosfato estructural: población mundial 8B+, intensidad agri al alza, biocombustibles</li>
+        <li>Restricciones export China + sanciones Rusia/Belarus = oferta global tight</li>
+        <li>USA-first política agraria: incentivos a producción doméstica de inputs</li>
+        <li>Posible reinicio SSP en Arraias 2027 → opcionalidad incremental EBITDA</li>
+        <li>Castlelake (accionista 64%) podría buscar salida (M&amp;A / OPV mejorada) en 18-36 meses</li>
+        <li>RSI 28 = sobrevendido técnico · setup de rebote estadísticamente favorable</li>
+      </ul>
+    </div>
+    <div class="card red">
+      <h3>Riesgos</h3>
+      <ul class="bul">
+        <li><strong>Costes de azufre/ácido sulfúrico</strong> siguen al alza por subida del petróleo y refinación restringida</li>
+        <li>Si la recuperación de margen tarda &gt; 2 trimestres, el mercado castiga otro 15-25%</li>
+        <li>Downgrade Raymond James (4 may) — más firmas podrían seguir si Q2 decepciona</li>
+        <li>Pasivos ambientales ARO: 25-30 M$/año hasta 2030+ son drag estructural FCF</li>
+        <li>Dividendo 7,12%: técnicamente cubierto, pero un FY de EBITDA &lt; 100 M$ podría forzar recorte</li>
+        <li>Float reducido (Castlelake 64%) → liquidez baja, deslizamiento alto en órdenes grandes</li>
+        <li>Riesgo "value trap" si el ciclo del fosfato entra en fase bear extendida</li>
+        <li>Concentración geográfica: 90%+ EBITDA depende de Conda (single-site risk)</li>
+      </ul>
+    </div>
+    <div class="card accent">
+      <h3>Escenarios numéricos · próximos 12 meses</h3>
+      <h4 style="color:var(--green)">Bull (probabilidad ~30%)</h4>
+      <p style="font-size:13px">Recovery agresivo Q2-Q3 → FY26 Adj EBITDA &gt; 130 M$. P/E re-rate a 8-9x. Precio target 5,00-6,00 C$ (+87% a +125%).</p>
+      <h4 style="color:var(--yellow)">Base (probabilidad ~50%)</h4>
+      <p style="font-size:13px">Margen recupera parcialmente. FY26 Adj EBITDA 100-115 M$. Mercado revaloriza a P/E 6-7x. Target 4,00-4,80 C$ (+50% a +80%).</p>
+      <h4 style="color:var(--red)">Bear (probabilidad ~20%)</h4>
+      <p style="font-size:13px">Q2 sigue comprimido, Q3 marginal. FY26 EBITDA &lt; 80 M$. Recorte de dividendo. Stock cae a 2,00-2,20 C$ (-18% a -25%).</p>
+    </div>
+  </div>
+
+  <div class="alert yellow" style="margin-top:18px">
+    <strong>Operativa sugerida:</strong> Este NO es un trade de "evento" como Krafton/Subnautica. Es una posición <strong>value cíclica</strong> con horizonte 9-18 meses. El reloj empieza con los resultados Q2 2026 (esperados finales julio 2026). Métricas clave a vigilar: <em>(1)</em> Adj EBITDA Q2 ≥ 25 M$ (señal de inflexión); <em>(2)</em> guidance 2026 reiterado o subido; <em>(3)</em> precio del azufre fob Tampa estabilizándose.
+  </div>
+
+  <h3>Comparables · cómo se han comportado los productores fosfatados</h3>
+  <table>
+    <thead><tr><th>Empresa</th><th>Ticker</th><th class="num">Mkt Cap</th><th class="num">P/E TTM</th><th class="num">EV/EBITDA</th><th class="num">Dividend yield</th></tr></thead>
+    <tbody>
+      <tr><td>Mosaic Co.</td><td>MOS (NYSE)</td><td class="num">~10 mil M$</td><td class="num">~14x</td><td class="num">~6,5x</td><td class="num">~2,8%</td></tr>
+      <tr><td>Nutrien</td><td>NTR (NYSE)</td><td class="num">~28 mil M$</td><td class="num">~18x</td><td class="num">~7,8x</td><td class="num">~4,1%</td></tr>
+      <tr><td>OCP Group (privada)</td><td>—</td><td class="num">~20 mil M$ (est.)</td><td class="num">~10x</td><td class="num">~5x</td><td class="num">N/A</td></tr>
+      <tr><td>ICL Group</td><td>ICL (NYSE)</td><td class="num">~6 mil M$</td><td class="num">~12x</td><td class="num">~5,5x</td><td class="num">~3,5%</td></tr>
+      <tr><td>PhosAgro</td><td>PHOR (MOEX)</td><td class="num">~9 mil M$ (sanc.)</td><td class="num">~6x</td><td class="num">~4,5x</td><td class="num">~10%</td></tr>
+      <tr style="background:rgba(34,197,94,.08)"><td><strong>Itafos</strong></td><td><strong>IFOS.V</strong></td><td class="num"><strong>520 M C$ ≈ 380 M$</strong></td><td class="num"><strong>4,5x</strong></td><td class="num"><strong>~3,3x</strong></td><td class="num"><strong>7,12%</strong></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--muted)">Itafos cotiza a ~50% del múltiplo EBITDA del peer medio. Parte de ese descuento es justificable (tamaño, concentración Conda, float bajo), pero no en su totalidad.</p>
+
+  <h3>Cronología catalizadores próximos 12 meses</h3>
+  <table>
+    <thead><tr><th>Fecha estimada</th><th>Evento</th><th>Implicación</th></tr></thead>
+    <tbody>
+      <tr><td>Junio 2026</td><td>AGM accionistas · posibles declaraciones sobre M&amp;A / dividend policy</td><td>Anclaje de expectativas</td></tr>
+      <tr><td>Julio-Agosto 2026</td><td><strong>Resultados Q2 2026</strong></td><td><strong>Primer test de la tesis de recovery</strong></td></tr>
+      <tr><td>H2 2026</td><td>Inicio programa perforación Farim (Guinea-Bissau)</td><td>Catalizador opcional · monetización LP del activo</td></tr>
+      <tr><td>Octubre-Noviembre 2026</td><td>Resultados Q3 2026</td><td>Confirmación o invalidación de la tesis</td></tr>
+      <tr><td>Diciembre 2026</td><td>Dividendo Q4 declarado · señal sobre payout sostenibilidad</td><td>Sentiment-driver</td></tr>
+      <tr><td>Feb-Mar 2027</td><td>FY 2026 results + guidance 2027</td><td>Re-rating definitivo del múltiplo</td></tr>
+      <tr><td>2027</td><td>Reinicio planeado SSP en Arraias</td><td>Opcionalidad incremental EBITDA brasileño</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================ 4 MACRO ================ -->
+<section id="macro">
+  <h2>Fosfato y Macro Agrícola</h2>
+  <p class="lead">El fosfato (P2O5) es uno de los tres nutrientes básicos (junto con nitrógeno y potasio) sin sustituto biológico — no hay agricultura intensiva moderna sin fertilizante fosfatado. La oferta global está estructuralmente concentrada en Marruecos (OCP, 70% reservas mundiales), China (productor #1, pero con restricciones export desde 2021), Rusia, EE.UU. y Brasil.</p>
+
+  <div class="grid grid-4">
+    <div class="kpi"><div class="label">Precio MAP fob NOLA</div><div class="value">~720 USD/tn</div><div class="delta up">+8% YTD · sostenible</div></div>
+    <div class="kpi"><div class="label">Precio azufre Tampa</div><div class="value">~180 USD/tn</div><div class="delta down">+50% YoY · drag de margen</div></div>
+    <div class="kpi"><div class="label">USD/CAD</div><div class="value">1,367</div><div class="delta">CAD fuerte vs USD · -1% último mes</div></div>
+    <div class="kpi"><div class="label">Agri commodities</div><div class="value">Estables</div><div class="delta">Soja/maíz en rango · demanda fert OK</div></div>
+  </div>
+
+  <div class="grid grid-2" style="margin-top:20px">
+    <div class="card blue">
+      <h3>Vientos a favor</h3>
+      <ul class="bul">
+        <li><strong>Restricciones China a la exportación de fosfato</strong> (desde 2021, prorrogadas 2024) — quitan 5-10 Mt/año del mercado mundial</li>
+        <li><strong>Sanciones a Rusia/Belarus</strong> mantienen presión estructural sobre la oferta</li>
+        <li><strong>Crecimiento demanda agri estructural</strong>: 8B+ habitantes, intensificación cultivo, biocombustibles (etanol maíz, soja)</li>
+        <li><strong>Producción doméstica USA</strong>: Itafos es uno de los 3 únicos productores americanos — escasez estratégica</li>
+        <li><strong>Reforma USDA / Farm Bill 2025</strong>: incentivos a productores domésticos de inputs agrícolas</li>
+        <li><strong>Marruecos (OCP)</strong> opera con prudencia y disciplina de precios — no inundará mercado</li>
+        <li><strong>El Niño / clima</strong>: en años de stress climático, los agricultores tienden a mantener o aumentar inputs por seguro de cosecha</li>
+      </ul>
+    </div>
+    <div class="card yellow">
+      <h3>Vientos en contra</h3>
+      <ul class="bul">
+        <li><strong>Coste de azufre/ácido sulfúrico</strong>: pico cíclico por refinería USA tight + crudo &gt; 80 USD</li>
+        <li><strong>Precio de granos</strong>: si soja/maíz colapsan, demanda fertilizante baja por reducción de hectáreas plantadas</li>
+        <li><strong>Riesgo regulatorio ambiental</strong>: EPA y permits cada vez más exigentes (cf legacy ARO de Conda)</li>
+        <li><strong>Marruecos OCP</strong> tiene capacidad de tirar precios si decide ganar cuota de mercado</li>
+        <li><strong>Sustitutos parciales</strong>: agricultura de precisión + biofosfatos reducen marginalmente el TAM</li>
+        <li><strong>Riesgo divisa</strong>: USD débil reduce ingresos en CAD reportados (efecto secundario)</li>
+        <li><strong>Recesión</strong>: si EE.UU. entra recesión, demanda fertilizante alimentaria es más resiliente que la industrial pero no inmune</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Precio del fosfato (MAP NOLA) vs Itafos vs USD/CAD · gráfico interactivo</h3>
+  <div class="tf-btns">
+    <button class="tf-btn" data-range="1M">1M</button>
+    <button class="tf-btn" data-range="3M">3M</button>
+    <button class="tf-btn" data-range="6M">6M</button>
+    <button class="tf-btn active" data-range="1Y">1Y</button>
+    <button class="tf-btn" data-range="3Y">3Y</button>
+    <button class="tf-btn" data-range="5Y">5Y</button>
+  </div>
+  <div class="chart-box tall"><canvas id="macroChart"></canvas></div>
+
+  <div class="alert blue">
+    <strong>Lectura macro:</strong> el setup combinado favorece a un productor americano integrado como Itafos a 12-24 meses, pero a corto plazo (próximos 2 trimestres) el coste de azufre es el factor más impactante. La tesis fosfato no se rompe a menos que (i) China revierta restricciones export <em>y</em> (ii) crudo colapse llevando azufre a &lt; 100 USD/tn de forma sostenida. Ambos son posibles pero improbables simultáneamente.
+  </div>
+</section>
+
+<!-- ================ 5 FUNDAMENTAL ================ -->
+<section id="fundamental">
+  <h2>Análisis Fundamental</h2>
+  <p class="lead">Balance excepcional (cash 48 M$, deuda 86 M$, deuda neta solo 38 M$, equity 440 M$). Múltiplos comprimidos tras la corrección post-Q1 (P/E TTM 4,5x, fwd P/E 5,2x, EV/EBITDA ~3,3x). El consenso de 6 analistas mantiene target medio de 4,50 C$ (+68,5% desde el spot 2,67 C$).</p>
+
+  <div class="grid grid-4">
+    <div class="kpi"><div class="label">Revenue TTM (USD)</div><div class="value">564 M$</div><div class="usd">≈ 771 M C$ · +13,1% YoY</div></div>
+    <div class="kpi"><div class="label">Adj EBITDA TTM</div><div class="value">137,8 M$</div><div class="usd">≈ 188 M C$ · margen 24%</div></div>
+    <div class="kpi"><div class="label">Net Income TTM</div><div class="value">82 M$</div><div class="usd">≈ 112 M C$</div></div>
+    <div class="kpi"><div class="label">Revenue 2025 (FY)</div><div class="value">558 M$</div><div class="usd">≈ 763 M C$ · récord</div></div>
+  </div>
+
+  <h3>Múltiplos de valoración · qué significa cada uno y cómo está Itafos</h3>
+  <div class="grid grid-2">
+    <div class="metric-card">
+      <div class="head"><span class="name">P/E (TTM) · Precio sobre beneficios</span><span class="val">4,54x</span></div>
+      <div class="desc">Cuántos años de beneficios actuales hacen falta para "recuperar" el precio que pagas. Mediana mercado canadiense: ~16,4x. Sector químico NA: ~21x.</div>
+      <div class="state">✅✅ <strong>Muy barato</strong> · ~73% de descuento vs mercado y ~78% vs sector. Refleja desconfianza en sostenibilidad del beneficio post-Q1.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">P/E Forward · sobre beneficios estimados próximo año</span><span class="val">5,21x</span></div>
+      <div class="desc">El P/E del próximo año fiscal según consenso. Más informativo en empresas cíclicas. Mediana sector: ~15x.</div>
+      <div class="state">✅ <strong>Muy barato</strong> · El forward P/E mayor que el TTM revela que el consenso anticipa caída temporal de earnings antes de la recuperación.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">EV/EBITDA · valor empresa sobre EBITDA</span><span class="val">~3,3x</span></div>
+      <div class="desc">EV (mkt cap + deuda - caja) sobre EBITDA TTM. Mediana sector fertilizantes: 6-7x. Mosaic: ~6,5x. Nutrien: ~7,8x.</div>
+      <div class="state">✅✅ <strong>Excepcional</strong> · ~50% del múltiplo de peers. Aplicar peer multiple → fair value ~6-8 C$ por acción.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">EV/Sales · valor empresa sobre ventas</span><span class="val">~0,70x</span></div>
+      <div class="desc">Mediana sector químico: 1,5-2,5x. Productores fosfato: 1,2-1,8x.</div>
+      <div class="state">✅ <strong>Barato</strong> · La acción cotiza por debajo de un año de sus propias ventas. Sólo sucede en situaciones de stress severo.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">P/Sales · Precio sobre ventas</span><span class="val">0,67x</span></div>
+      <div class="desc">Similar a EV/Sales pero sin neutralizar caja/deuda.</div>
+      <div class="state">✅ <strong>Muy bajo</strong></div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">P/Book · Precio sobre valor contable</span><span class="val">~0,87x</span></div>
+      <div class="desc">Cuánto pagas por cada unidad de equity contable. &lt; 1x es señal contable de oportunidad (o de problemas). Mediana sector: ~2x.</div>
+      <div class="state">✅ <strong>Por debajo de book</strong> · Mercado paga menos que el valor contable de los activos. Margin of safety significativo si los activos no están deteriorados.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">ROE · Rentabilidad sobre fondos propios</span><span class="val">~18,6%</span></div>
+      <div class="desc">Net income TTM / equity medio. Sector: ~12-15%. &gt; 15% = excelente.</div>
+      <div class="state">✅ <strong>Excelente</strong> · ROE superior al peer mediano. Combinado con P/B &lt; 1 = clásico setup de value cíclico.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">ROIC · Rentabilidad sobre capital invertido</span><span class="val">~16-18%</span></div>
+      <div class="desc">La métrica fundamental: cuánto rinde el capital efectivamente puesto a trabajar. &gt; 15% = empresa de calidad.</div>
+      <div class="state">✅ <strong>Sólido</strong> · Conda + Arraias generan retornos por encima del coste de capital.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">Margen operativo · OP / Revenue</span><span class="val">19,8% (FY25)</span></div>
+      <div class="desc">Beneficio operativo sobre ventas. Sector fertilizantes mediano: ~12-18%. Pico cíclico (Itafos 2022): 31%.</div>
+      <div class="state">✅ <strong>Bueno</strong> · Margen Q1 2026 cayó a ~10% (drag del azufre). Recovery esperado a 18-22% en H2 2026.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">Adj EBITDA Margin</span><span class="val">28% FY25 · 13% Q1 26</span></div>
+      <div class="desc">Margen EBITDA ajustado. La diferencia FY25 vs Q1 26 refleja el shock de input puntual.</div>
+      <div class="state">🟡 <strong>Comprimido transitoriamente</strong> · Si Q2 vuelve a 22-25%, valida la tesis. Si no, hay que reescribir.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">Deuda / Equity · apalancamiento</span><span class="val">19,6%</span></div>
+      <div class="desc">Mide el riesgo financiero. &lt; 30% = saludable. &gt; 100% = elevado. Sector fertilizante mediano: ~50-80%.</div>
+      <div class="state">✅✅ <strong>Muy bajo</strong> · Itafos está casi unleveraged comparado con peers. Net leverage 0,3x vs ~2-3x peers.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">Current Ratio · liquidez corriente</span><span class="val">2,71x</span></div>
+      <div class="desc">Activos corrientes sobre pasivos corrientes. &gt; 1 = solvente; &gt; 2 = muy solvente.</div>
+      <div class="state">✅ <strong>Muy alto</strong> · Sin riesgo de liquidez incluso en escenarios bear.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">Dividend Yield · rentabilidad por dividendo</span><span class="val">7,12%</span></div>
+      <div class="desc">Dividendo anual sobre precio. Cobertura ~1,3-1,6x el FCF en escenario base.</div>
+      <div class="state">✅ <strong>Atractivo y cubierto</strong> · El yield del 7% es uno de los más altos del sector. Riesgo de recorte si FY26 EBITDA &lt; 80 M$. Probabilidad &lt; 25%.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">Beta vs mercado</span><span class="val">0,81</span></div>
+      <div class="desc">Sensibilidad al mercado canadiense. &lt; 1 = menos volátil que el mercado en agregado.</div>
+      <div class="state">🟡 <strong>Bajo</strong> · El Beta bajo es engañoso: Itafos tiene baja correlación con el mercado pero alta volatilidad idiosincrática (Q1 2026: -17% en un día).</div>
+    </div>
+  </div>
+
+  <h3>Balance · solidez patrimonial (cifras USD, equivalente CAD)</h3>
+  <div class="grid grid-3">
+    <div class="card green">
+      <h4>Caja & equivalentes</h4>
+      <p style="font-size:24px;font-weight:800;color:var(--green)">48,2 M$</p>
+      <p style="font-size:13px;color:var(--accent2)">≈ 65,9 M C$</p>
+      <p style="font-size:12px;color:var(--muted)">~12,7% del market cap</p>
+    </div>
+    <div class="card yellow">
+      <h4>Deuda total</h4>
+      <p style="font-size:24px;font-weight:800;color:var(--yellow)">86,2 M$</p>
+      <p style="font-size:13px;color:var(--accent2)">≈ 117,8 M C$</p>
+      <p style="font-size:12px;color:var(--muted)">Net debt: 38 M$ (≈ 52 M C$)</p>
+    </div>
+    <div class="card blue">
+      <h4>Equity</h4>
+      <p style="font-size:24px;font-weight:800;color:var(--blue)">440,5 M$</p>
+      <p style="font-size:13px;color:var(--accent2)">≈ 602 M C$</p>
+      <p style="font-size:12px;color:var(--muted)">Total Assets: 819 M$ (≈ 1,12 mil M C$)</p>
+    </div>
+  </div>
+
+  <h3>Consenso analistas (6 cubriendo)</h3>
+  <div class="chart-box" style="height:300px"><canvas id="analystChart"></canvas></div>
+
+  <div class="alert green" style="margin-top:18px">
+    <strong>Conclusión fundamental:</strong> Itafos cotiza por debajo de book value, con P/E 4,5x, EV/EBITDA 3,3x, y dividend yield 7%. Tres descuentos aplicados: <strong>(1) tamaño/liquidez</strong>, <strong>(2) concentración Conda</strong>, <strong>(3) Q1 2026 sobre-leído</strong>. Si cualquiera de los tres se relaja, hay re-rating mecánico de 50-100%.
+  </div>
+</section>
+
+<!-- ================ 6 TECNICO ================ -->
+<section id="tecnico">
+  <h2>Análisis Técnico</h2>
+  <p class="lead">La cotización viene de máximos 12m en 4,67 C$ (marzo 2026) y ha corregido un -43% en menos de 8 semanas tras los resultados Q1. RSI(14) cayó a 28 (zona sobreventa). El stock está testeando el soporte estructural de 2,50-2,70 C$, zona de acumulación de la base 2024-2025.</p>
+
+  <div class="grid grid-4">
+    <div class="kpi"><div class="label">Precio cierre 12 May</div><div class="value">2,67 C$</div><div class="usd">≈ 1,95 USD · <span style="color:#f87171">-43% vs máx 52w</span></div></div>
+    <div class="kpi"><div class="label">52w High</div><div class="value">4,67 C$</div><div class="usd">≈ 3,42 USD · pico Mar 2026</div></div>
+    <div class="kpi"><div class="label">52w Low</div><div class="value">2,15 C$</div><div class="usd">≈ 1,57 USD · +24% sobre mín</div></div>
+    <div class="kpi"><div class="label">Volumen medio</div><div class="value" style="font-size:18px">~400k acc/día</div><div class="usd">≈ 1,1 M C$/día (≈ 0,8 M USD)</div></div>
+  </div>
+
+  <h3>Indicadores técnicos clave</h3>
+  <div class="grid grid-3">
+    <div class="metric-card">
+      <div class="head"><span class="name">RSI(14)</span><span class="val">~28,3</span></div>
+      <div class="desc">Relative Strength Index. &lt;30 = sobrevendido (compra), &gt;70 = sobrecomprado.</div>
+      <div class="state">✅ <strong>Sobrevendido</strong> · Lectura clásica de rebote. RSI &lt; 30 en small caps sólidas tiende a marcar suelo dentro de 5-15 sesiones.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">MA50 (media 50 días)</span><span class="val">~3,50 C$</span></div>
+      <div class="desc">Media móvil corto plazo. Precio por debajo = tendencia corto bajista.</div>
+      <div class="state">🟡 <strong>Precio muy por debajo</strong> · -24% vs MA50 = mean reversion estadísticamente probable.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">MA200 (media 200 días)</span><span class="val">~3,30 C$</span></div>
+      <div class="desc">Media móvil largo plazo. Precio por debajo = aún no se ha confirmado tendencia LP alcista.</div>
+      <div class="state">🟡 <strong>Precio por debajo</strong> · Recuperarla con volumen sería el "all clear" técnico (+23% desde aquí).</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">MACD (12,26,9)</span><span class="val">Negativo</span></div>
+      <div class="desc">Moving Average Convergence Divergence. Cruce bajista activo desde 5 may.</div>
+      <div class="state">🟡 <strong>Buscando suelo</strong> · El histograma se está aplanando — primera señal de agotamiento bajista.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">Bollinger Bands (20,2)</span><span class="val">2,55 - 3,90 C$</span></div>
+      <div class="desc">Banda de volatilidad. Tocar banda inferior = potencial rebote.</div>
+      <div class="state">✅ <strong>Tocando banda inferior</strong> · Setup de rebote técnico activo.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">Volumen relativo</span><span class="val">~2,2x media</span></div>
+      <div class="desc">Volumen del día sobre media 30d. Volúmenes altos + caída pueden indicar capitulación.</div>
+      <div class="state">🟡 <strong>Capitulación visible</strong> · El 5 mayo se cruzaron ~1,5M acciones (3-4x media). Suele preceder a un suelo.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">ATR(14) · volatilidad</span><span class="val">~0,18 C$</span></div>
+      <div class="desc">Average True Range. Rango medio diario. Para dimensionar stop loss.</div>
+      <div class="state">🟡 <strong>Volatilidad elevada</strong> · ~6,7% diario. Stop &lt; 2× ATR (0,36 C$) sería prematuro.</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">Estructura de precio</span><span class="val">Test soporte mayor</span></div>
+      <div class="desc">Soporte horizontal en 2,50-2,70 C$ = zona de acumulación 2024-25.</div>
+      <div class="state">✅ <strong>Setup de rebote</strong> · Si aguanta 2,50, target técnico 3,30-3,50 (gap del 5 may).</div>
+    </div>
+    <div class="metric-card">
+      <div class="head"><span class="name">Beta vs TSX-V</span><span class="val">~0,81</span></div>
+      <div class="desc">Sensibilidad al índice. &lt; 1 = menos volátil que el mercado en agregado.</div>
+      <div class="state">🟡 <strong>Baja correlación</strong> · Pero alta volatilidad idiosincrática (eventos earnings).</div>
+    </div>
+  </div>
+
+  <h3>Niveles clave operativos</h3>
+  <table>
+    <thead><tr><th>Tipo</th><th class="num">Nivel (C$)</th><th class="num">USD</th><th>Significado</th><th>Acción</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag red">R3</span></td><td class="num">4,67</td><td class="num">≈ 3,42$</td><td>Máximo 52w · pico mar 2026</td><td>Take profit fuerte</td></tr>
+      <tr><td><span class="tag red">R2</span></td><td class="num">4,50</td><td class="num">≈ 3,29$</td><td>Target consenso analistas</td><td>TP3 · vender 30%</td></tr>
+      <tr><td><span class="tag yellow">R1</span></td><td class="num">3,50</td><td class="num">≈ 2,56$</td><td>MA50 · gap pre-earnings</td><td>TP1 · vender 25%</td></tr>
+      <tr><td><span class="tag yellow">R0</span></td><td class="num">3,30</td><td class="num">≈ 2,41$</td><td>MA200 · "all clear" técnico</td><td>Confirmación tendencia</td></tr>
+      <tr><td><span class="tag orange">Spot</span></td><td class="num">2,67</td><td class="num">≈ 1,95$</td><td>Cierre 12 May · -43% del máx</td><td>—</td></tr>
+      <tr><td><span class="tag green">S1</span></td><td class="num">2,55</td><td class="num">≈ 1,87$</td><td>Banda Bollinger inferior</td><td>Zona compra escalonada</td></tr>
+      <tr><td><span class="tag green">S2</span></td><td class="num">2,30</td><td class="num">≈ 1,68$</td><td>Acumulación base 2024 · soporte fuerte</td><td>Compra agresiva</td></tr>
+      <tr><td><span class="tag green">S3</span></td><td class="num">2,15</td><td class="num">≈ 1,57$</td><td>Mínimo 52w</td><td>Stop loss estructural</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Gráfico precio 12M con MA50, MA200 y Bandas de Bollinger</h3>
+  <div class="chart-box tall"><canvas id="priceChart"></canvas></div>
+
+  <div class="alert blue">
+    <strong>Lectura técnica (12 May, cierre 2,67 C$):</strong> Stock en zona de sobreventa con RSI 28, tocando banda inferior de Bollinger, volumen de capitulación visible. Setup probabilísticamente favorable a un rebote en próximas 1-3 semanas, target inicial gap 3,30-3,50 C$ (+24% a +31%). Riesgo: si pierde 2,50 con volumen, se abre tramo a 2,15 (-6% más). Stop loss estructural en 2,15 (mínimo 52w).
+  </div>
+</section>
+
+<!-- ================ 7 TESIS ================ -->
+<section id="tesis">
+  <h2>Tesis de Inversión</h2>
+  <p class="lead">Itafos combina <strong>balance sólido + valoración deprimida + catalizador cíclico programado + dividendo 7%</strong>. La tesis tiene tres patas con horizontes distintos.</p>
+
+  <div class="grid grid-3">
+    <div class="card accent">
+      <h3>1 · Corto plazo (1-3 meses)</h3>
+      <h4>"Rebote técnico + sentiment"</h4>
+      <ul class="bul">
+        <li>RSI 28 + capitulación volumen + tocando soporte fuerte</li>
+        <li>Cobro del próximo dividendo trimestral (~0,05 C$ por acción)</li>
+        <li>Reacciones a guía Q2 (junio AGM)</li>
+        <li><strong>Target:</strong> 3,30-3,50 C$ <span class="usd-inline">(≈ 2,41-2,56 USD · +24% a +31%)</span></li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h3>2 · Medio plazo (6-12 meses)</h3>
+      <h4>"Recovery margen + re-rating"</h4>
+      <ul class="bul">
+        <li>Q2-Q3 2026 EBITDA recupera por cláusulas LP</li>
+        <li>EV/EBITDA 3,3x → 5,5-6x (mediano peer) = +65-80% acción</li>
+        <li>Possible upgrade Raymond James si Q2 mejora</li>
+        <li><strong>Target:</strong> 4,50-5,00 C$ <span class="usd-inline">(≈ 3,29-3,66 USD · +69% a +87%)</span></li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>3 · Largo plazo (2-4 años)</h3>
+      <h4>"M&amp;A o expansion strategic"</h4>
+      <ul class="bul">
+        <li>Castlelake busca salida natural en 2027-2028</li>
+        <li>Mosaic/Nutrien candidatos lógicos para adquirir Conda</li>
+        <li>Premium de control típico: 30-50% sobre cotización</li>
+        <li>Alternativa: Farim (Guinea-Bissau) en producción 2029+</li>
+        <li><strong>Target:</strong> 6,00-7,50 C$ <span class="usd-inline">(≈ 4,39-5,49 USD · +125% a +180%)</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Roadmap de catalizadores</h3>
+  <table>
+    <thead><tr><th>Catalizador</th><th>Tipo</th><th>Timing</th><th>Impacto potencial</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Rebote técnico desde sobreventa</strong></td><td>Técnico</td><td>1-3 semanas</td><td><span class="tag green">+15-25%</span></td></tr>
+      <tr><td>AGM accionistas · declaraciones management</td><td>Sentimiento</td><td>Junio 2026</td><td><span class="tag yellow">Variable</span></td></tr>
+      <tr><td><strong>Q2 2026 earnings (jul-ago)</strong></td><td>Fundamental</td><td>~ 30 julio 2026</td><td><span class="tag green">+20-40% si recovery / -15% si no</span></td></tr>
+      <tr><td>Inicio perforación Farim</td><td>Estratégico</td><td>H2 2026</td><td><span class="tag blue">+5-10% (sentiment)</span></td></tr>
+      <tr><td>Q3 2026 earnings · confirmación</td><td>Fundamental</td><td>Octubre 2026</td><td><span class="tag green">+15-25%</span></td></tr>
+      <tr><td>Reinicio SSP Arraias</td><td>Operativo</td><td>2027</td><td><span class="tag blue">+10 M$ EBITDA / ~ +5-8% stock</span></td></tr>
+      <tr><td><strong>M&amp;A / OPV mejorada</strong></td><td>Estratégico</td><td>2027-2028</td><td><span class="tag green">+30-60% premium control</span></td></tr>
+      <tr><td>Farim FID (decisión inversión)</td><td>Estratégico</td><td>2028-2029</td><td><span class="tag purple">Opcionalidad LP</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Estructura del sector · por qué Itafos puede ser opa-able</h3>
+  <div class="card purple" style="margin:14px 0">
+    <p>El sector fertilizante fosfatado en EE.UU. está estructuralmente concentrado: <strong>solo tres productores integrados domésticos</strong> (Mosaic, Nutrien e Itafos). El cuarto productor relevante (J.R. Simplot) es privado.</p>
+    <h4 style="margin-top:14px">Por qué Conda es un activo estratégico para un adquirente:</h4>
+    <ul class="bul">
+      <li><strong>Permisos EPA activos</strong>: imposibles de replicar en &lt; 7-10 años para un nuevo entrante</li>
+      <li><strong>Ubicación Idaho/Wyoming</strong>: sirve mercado oeste americano con coste logístico mínimo · complementa portfolio Mosaic (Florida-centric) o Nutrien (Saskatchewan + Florida)</li>
+      <li><strong>Tamaño asumible</strong>: con un EV ~420 M$, una operación es financiable para cualquier major del sector sin diluir significativamente</li>
+      <li><strong>Castlelake como vendedor natural</strong>: private equity con hold time típico 5-7 años, ya van 9 años desde 2017 — presión interna de exit creciente</li>
+    </ul>
+    <h4 style="margin-top:14px">Implicación valoración:</h4>
+    <p>Mosaic ha pagado en M&amp;A pasadas múltiplos EV/EBITDA de 7-8x. Si Itafos cierra 2026 con 110 M$ EBITDA y un comprador estratégico aplica 6,5x, EV = 715 M$ → equity value ~677 M$ → ~3,48 USD/acción ≈ 4,75 C$/acción (+78% sobre spot). En un escenario más bull (130 M$ EBITDA, 7x), llegaríamos a ~6,20 C$/acción (+132%).</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:8px">Riesgo: no hay timeline ni catalyst forzado. Castlelake puede esperar. M&amp;A es opcionalidad pura.</p>
+  </div>
+
+  <h3>Calificación cuantitativa por dimensión</h3>
+  <table>
+    <thead><tr><th>Dimensión</th><th style="width:50%">Score</th><th class="num">Nota /10</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td>Calidad del negocio</td><td><div class="score-row"><div class="score-bar"><div class="score-fill" style="width:70%"></div></div></div></td><td class="num"><strong>7,0</strong></td><td>Activos integrados Conda · márgenes ciclicos pero ROIC 16%+ medio · concentración alta</td></tr>
+      <tr><td>Solidez balance</td><td><div class="score-row"><div class="score-bar"><div class="score-fill" style="width:90%"></div></div></div></td><td class="num"><strong>9,0</strong></td><td>Net debt 38 M$ · D/E 20% · current 2,71 · sin riesgo financiero</td></tr>
+      <tr><td>Valoración</td><td><div class="score-row"><div class="score-bar"><div class="score-fill" style="width:95%"></div></div></div></td><td class="num"><strong>9,5</strong></td><td>P/E 4,5x · EV/EBITDA 3,3x · P/B 0,87 · descuento 50%+ vs peers</td></tr>
+      <tr><td>Crecimiento</td><td><div class="score-row"><div class="score-bar"><div class="score-fill" style="width:55%"></div></div></div></td><td class="num"><strong>5,5</strong></td><td>FY25 revenue +14% · Q1 26 -53% EBITDA · cíclico, no compounder</td></tr>
+      <tr><td>Catalizadores</td><td><div class="score-row"><div class="score-bar"><div class="score-fill" style="width:80%"></div></div></div></td><td class="num"><strong>8,0</strong></td><td>Q2 earnings (jul) · Q3 (oct) · Farim · potencial M&amp;A</td></tr>
+      <tr><td>Calidad management</td><td><div class="score-row"><div class="score-bar"><div class="score-fill" style="width:75%"></div></div></div></td><td class="num"><strong>7,5</strong></td><td>CEO Delaney ha eliminado 150 M$ deuda · ejecución sólida · alineamiento Castlelake</td></tr>
+      <tr><td>Risk · concentración</td><td><div class="score-row"><div class="score-bar"><div class="score-fill" style="width:40%"></div></div></div></td><td class="num"><strong>4,0</strong></td><td>~90% EBITDA en Conda · single-site · cíclico</td></tr>
+      <tr><td>Liquidez stock</td><td><div class="score-row"><div class="score-bar"><div class="score-fill" style="width:40%"></div></div></div></td><td class="num"><strong>4,0</strong></td><td>Float bajo (~70M) · ADV ~400k acc · slippage relevante en órdenes &gt; 50k C$</td></tr>
+      <tr><td>Dividendo / shareholder return</td><td><div class="score-row"><div class="score-bar"><div class="score-fill" style="width:85%"></div></div></div></td><td class="num"><strong>8,5</strong></td><td>Yield 7,12% · cubierto x1,3-1,6 FCF · sostenible</td></tr>
+    </tbody>
+    <tfoot>
+      <tr style="background:rgba(34,197,94,.1)"><td><strong>SCORE GLOBAL</strong></td><td></td><td class="num"><strong style="color:var(--accent2);font-size:18px">7,0 / 10</strong></td><td><strong>Calidad media-alta · valoración excelente · perfil "value cíclico"</strong></td></tr>
+    </tfoot>
+  </table>
+
+  <div class="alert green" style="margin-top:18px">
+    <strong>Recomendación:</strong> <span class="tag green">COMPRA ESPECULATIVA</span> con horizonte 6-18 meses. Asimetría favorable: downside técnico claro (-19% a 2,15 C$), upside fundamental amplio (+69% a consenso, +125-180% en escenario M&amp;A LP). Posición tamaño máximo 3-5% del portfolio dada concentración + liquidez baja.
+  </div>
+</section>
+
+<!-- ================ 8 TIMING ================ -->
+<section id="timing">
+  <h2>Timing · Plan de Entrada y Gestión</h2>
+  <p class="lead">Itafos es un <strong>trade de paciencia con asimetría favorable</strong>: el setup técnico (RSI 28, capitulación) + setup fundamental (P/E 4,5x, balance limpio) + dividendo cobrable mientras esperas crean una combinación poco habitual. La clave no es timing perfecto sino <em>position sizing</em> correcto.</p>
+
+  <div class="grid grid-2">
+    <div class="card blue">
+      <h3>Filosofía recomendada</h3>
+      <ul class="bul">
+        <li><strong>60% Core (time in market):</strong> Construir a estos niveles (2,55-2,80 C$), holdear 9-18 meses para recovery + re-rating</li>
+        <li><strong>40% Trade (market timing):</strong> Reserva para promediar a la baja si cae a 2,30 o tomar parcial en 3,30</li>
+        <li>No esperar al "fondo perfecto" — está a -43% del máximo con balance limpio y dividendo 7%</li>
+        <li>El dividendo trimestral te paga por esperar (~7% anual = ~1,75% por trimestre)</li>
+        <li>Dollar-cost averaging mensual durante los próximos 3-4 meses cubre incertidumbre Q2/Q3</li>
+      </ul>
+    </div>
+    <div class="card accent">
+      <h3>Plan de entrada propuesto</h3>
+      <ul class="bul">
+        <li><strong>Tramo 1 (40%)</strong> · Compra inmediata 2,60-2,80 C$ — el spot 2,67 está en zona</li>
+        <li><strong>Tramo 2 (35%)</strong> · Compra si retesta 2,30-2,50 C$ (soporte mayor)</li>
+        <li><strong>Tramo 3 (25%)</strong> · Reserva para 2,15-2,25 C$ (mínimo 52w) — compra agresiva</li>
+        <li>Si rompe 3,30 sin tocar 2,30, se completa la posición con un tramo de "compra de fuerza"</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Position sizing detallado (ejemplo cartera de 50.000 EUR)</h3>
+  <table>
+    <thead><tr><th>Concepto</th><th class="num">EUR</th><th class="num">Acciones (aprox)</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td>Tamaño máximo recomendado de la posición</td><td class="num">1.500 - 2.500 €</td><td class="num">~780-1.300</td><td>3-5% del portfolio total (single-stock single-IP-cíclico)</td></tr>
+      <tr><td>Tramo 1 (40%) hoy</td><td class="num">600 - 1.000 €</td><td class="num">~310-520</td><td>Captura entrada en zona sobrevendida</td></tr>
+      <tr><td>Tramo 2 (35%) si retesta</td><td class="num">525 - 875 €</td><td class="num">~290-490</td><td>Compra en 2,30-2,50 C$</td></tr>
+      <tr><td>Tramo 3 (25%) si gran corrección</td><td class="num">375 - 625 €</td><td class="num">~220-360</td><td>Compra agresiva en 2,15-2,25 C$ (mínimo 52w)</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--muted);margin-top:6px">* Conversión aproximada: 1 EUR ≈ 1,52 CAD. Una acción a 2,67 C$ ≈ 1,76 €. Verifica el cambio EUR/CAD en tiempo real antes de operar.</p>
+
+  <h3>Tabla operativa · niveles, TP y SL</h3>
+  <table>
+    <thead><tr><th>Concepto</th><th class="num">Precio (C$)</th><th class="num">USD</th><th class="num">% vs spot</th><th>Acción</th></tr></thead>
+    <tbody>
+      <tr style="background:rgba(239,68,68,.06)"><td><strong>Stop Loss estructural</strong></td><td class="num">2,00</td><td class="num">≈ 1,46$</td><td class="num">-25,1%</td><td>Cierre completo · invalida tesis</td></tr>
+      <tr style="background:rgba(239,68,68,.04)"><td>Stop Loss técnico (corto plazo)</td><td class="num">2,15</td><td class="num">≈ 1,57$</td><td class="num">-19,5%</td><td>Reducir 50% si rompe con volumen</td></tr>
+      <tr style="background:rgba(34,197,94,.05)"><td><strong>Zona de compra agresiva</strong></td><td class="num">2,15 - 2,30</td><td class="num">≈ 1,57-1,68$</td><td class="num">-19,5% / -13,9%</td><td>Tramo 3 (25%)</td></tr>
+      <tr style="background:rgba(34,197,94,.05)"><td>Zona de compra equilibrada</td><td class="num">2,30 - 2,50</td><td class="num">≈ 1,68-1,83$</td><td class="num">-13,9% / -6,4%</td><td>Tramo 2 (35%)</td></tr>
+      <tr style="background:rgba(34,197,94,.08)"><td><strong>Precio actual (cierre 12 May)</strong></td><td class="num">2,67</td><td class="num">≈ 1,95$</td><td class="num">0%</td><td>Tramo 1 (40%) — sobreventa técnica</td></tr>
+      <tr style="background:rgba(34,197,94,.05)"><td>Rebote técnico inicial</td><td class="num">3,30</td><td class="num">≈ 2,41$</td><td class="num">+23,6%</td><td>MA200 · vender 20%</td></tr>
+      <tr style="background:rgba(34,197,94,.08)"><td><strong>Gap pre-earnings</strong></td><td class="num">3,50</td><td class="num">≈ 2,56$</td><td class="num">+31,1%</td><td>TP1 · vender 25%</td></tr>
+      <tr style="background:rgba(34,197,94,.1)"><td><strong>Target consenso analistas</strong></td><td class="num">4,50</td><td class="num">≈ 3,29$</td><td class="num">+68,5%</td><td>TP2 · vender 30%</td></tr>
+      <tr style="background:rgba(168,85,247,.1)"><td>Target M&amp;A / re-rating completo</td><td class="num">5,50 - 6,50</td><td class="num">≈ 4,02-4,75$</td><td class="num">+106% / +143%</td><td>TP3 · mantener 25% para escenario LP</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Risk/Reward</h3>
+  <div class="grid grid-3">
+    <div class="card red">
+      <h4>Downside (SL estructural)</h4>
+      <p style="font-size:30px;font-weight:800;color:#f87171">-25,1%</p>
+      <p style="font-size:12px;color:var(--muted)">Probabilidad estimada: ~20%</p>
+    </div>
+    <div class="card yellow">
+      <h4>Caso base (target consenso)</h4>
+      <p style="font-size:30px;font-weight:800;color:#facc15">+68,5%</p>
+      <p style="font-size:12px;color:var(--muted)">Probabilidad estimada: ~50%</p>
+    </div>
+    <div class="card green">
+      <h4>Upside (caso alcista / M&amp;A)</h4>
+      <p style="font-size:30px;font-weight:800;color:#4ade80">+106% a +143%</p>
+      <p style="font-size:12px;color:var(--muted)">Probabilidad estimada: ~30%</p>
+    </div>
+  </div>
+
+  <div class="alert green">
+    <strong>Risk/Reward esperado:</strong> Esperanza matemática positiva. <br>
+    E[R] = 0,20 × (-25,1%) + 0,50 × (+68,5%) + 0,30 × (+125%) ≈ <strong>+66,7%</strong> a 12-18 meses. Bonus: dividendo 7,12% anual mientras se mantiene la posición.
+  </div>
+
+  <h3>Métricas a vigilar próximos 6 meses</h3>
+  <div class="grid grid-2">
+    <div class="card cyan">
+      <h4>Métricas operativas trimestrales</h4>
+      <ul class="bul">
+        <li><strong>Adj EBITDA Q2 2026</strong>: ≥ 25 M$ = recovery validado · 15-25 M$ = mixto · &lt; 15 M$ = bear</li>
+        <li><strong>P2O5 sales volumes Q2</strong>: ≥ 90k tonnes Conda = operacional sólido</li>
+        <li><strong>Guidance FY 2026 reiterado</strong>: positivo · cualquier reducción de guía = bandera roja</li>
+        <li><strong>Cash flow operativo Q2</strong>: &gt; 30 M$ = cobertura cómoda del dividendo</li>
+        <li><strong>Net leverage ratio</strong>: ≤ 0,5x mantiene el grado de flexibilidad LP</li>
+      </ul>
+    </div>
+    <div class="card pink">
+      <h4>Reacciones programadas</h4>
+      <ul class="bul">
+        <li><strong>Q2 bull:</strong> Si EBITDA &gt; 30 M$ y stock sube +15% post-results → mantener todo, esperar Q3</li>
+        <li><strong>Q2 base:</strong> Si EBITDA 20-30 M$ y stock plano → mantener core, considerar TP1 parcial</li>
+        <li><strong>Q2 bear:</strong> Si EBITDA &lt; 15 M$ o guidance bajada → reducir 30-50% de la posición</li>
+        <li><strong>Si stock alcanza 3,50 antes de Q2</strong>: vender 25% (TP1) y subir SL a breakeven</li>
+        <li><strong>Si stock pierde 2,30 con volumen</strong>: reducir 50% y esperar a 2,15</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>FX hedging · gestión del riesgo divisa para inversor europeo</h3>
+  <div class="card yellow">
+    <p>Itafos cotiza en CAD. Para un inversor en EUR hay dos consideraciones FX:</p>
+    <ul class="bul">
+      <li><strong>EUR/CAD:</strong> Si el CAD se aprecia vs el euro, ganas extra al convertir de vuelta. Si se deprecia, pierdes.</li>
+      <li><strong>USD/CAD indirecto:</strong> Como Itafos reporta resultados en USD (Conda factura en USD), el EPS en CAD se ve afectado por el cambio. CAD débil vs USD beneficia los earnings reportados en CAD.</li>
+    </ul>
+    <p>El CAD está actualmente en zona normalizada (USD/CAD 1,367, vs media 5y ~1,33). <strong>El riesgo divisa para inversor EUR es modesto</strong>: la correlación EUR/CAD es relativamente estable. <strong>Solo considera cubrir si la posición supera 5.000 EUR</strong> con un forward EUR/CAD (broker tipo IBKR).</p>
+  </div>
+
+  <h3>Reglas de gestión</h3>
+  <ul class="bul">
+    <li><strong>Position sizing:</strong> Máximo 3-5% del portfolio total (small cap, single-IP, liquidez limitada)</li>
+    <li><strong>Revisión calendario:</strong> Después de Q2 2026 (julio/agosto) revisión crítica de la tesis con datos reales del recovery</li>
+    <li><strong>Stop dinámico:</strong> Tras TP1 (3,50), subir SL a breakeven (2,67). Tras TP2 (4,50), trailing stop al 20%</li>
+    <li><strong>Disciplina de salida:</strong> No vender por debajo del SL definido sin reescribir la tesis</li>
+    <li><strong>Cobrar dividendos:</strong> El dividendo trimestral compensa el coste de oportunidad de esperar el catalizador</li>
+    <li><strong>Broker:</strong> Para TSX Venture desde Europa, los brokers con acceso son Interactive Brokers (mejor opción), Saxo, DEGIRO (limitado). Comisiones 0,15-0,30% + custodia variable.</li>
+    <li><strong>Fiscalidad:</strong> Dividendos canadienses sufren retención del 25% en origen (recuperable al 15% via tratado España-Canadá en Modelo 100). Plusvalías tributan al 19-28% en España.</li>
+    <li><strong>Cuidado con TSX-V:</strong> Mercado de venture; la liquidez puede ser estrecha en momentos de stress. Usar siempre órdenes límite, no a mercado.</li>
+  </ul>
+
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> Este dossier es análisis financiero educativo, no asesoramiento de inversión. Datos actualizados al cierre del 12 mayo 2026 (precio 2,67 C$, -17% desde 4 May post-Q1) obtenidos de Yahoo Finance, StockAnalysis, Simply Wall St, GlobeNewswire, Itafos IR, GuruFocus, Bank of Canada y prensa especializada. Tipos de cambio aplicados: 1 USD = 1,367 CAD; 1 EUR ≈ 1,52 CAD. Las inversiones en small caps (especialmente TSX-V) conllevan riesgo elevado de pérdida y mayor volatilidad. Verificar precios en tiempo real antes de operar.
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p><strong>ITAFOS · Dossier de Inversión v1.0</strong> · Análisis a cierre 12 mayo 2026 (2,67 C$ · -17% post-Q1)</p>
+    <p>Fuentes: <a href="https://itafos.com/" target="_blank">Itafos IR</a> · <a href="https://finance.yahoo.com/quote/IFOS.V/" target="_blank">Yahoo Finance</a> · <a href="https://stockanalysis.com/quote/tsxv/IFOS/" target="_blank">StockAnalysis</a> · <a href="https://simplywall.st/stocks/ca/materials/tsxv-ifos/itafos-shares" target="_blank">Simply Wall St</a> · <a href="https://www.globenewswire.com/" target="_blank">GlobeNewswire</a> · <a href="https://www.tradingview.com/symbols/TSXV-IFOS/" target="_blank">TradingView</a></p>
+    <p style="margin-top:10px">Dossier construido por <a href="https://claude.com/claude-code" target="_blank">Claude Code</a> · Mayo 2026 · v1.0</p>
+  </div>
+</footer>
+
+<script>
+const FX_USD_CAD = 1.367;
+const toCAD = usd => (usd * FX_USD_CAD);
+const fmtCAD = usd => {
+  const v = toCAD(usd);
+  if (v >= 1_000_000_000) return (v/1_000_000_000).toFixed(2)+' mil M C$';
+  if (v >= 1_000_000) return (v/1_000_000).toFixed(1)+' M C$';
+  if (v >= 1_000) return (v/1_000).toFixed(1)+' k C$';
+  return v.toFixed(2)+' C$';
+};
+const fmtUSD = usd => {
+  if (usd >= 1_000_000_000) return (usd/1_000_000_000).toFixed(2)+' mil M$';
+  if (usd >= 1_000_000) return (usd/1_000_000).toFixed(1)+' M$';
+  if (usd >= 1_000) return (usd/1_000).toFixed(1)+' k$';
+  return usd.toFixed(2)+' $';
+};
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+// Chart.js global
+Chart.defaults.color = '#88a397';
+Chart.defaults.borderColor = '#1f3a2e';
+Chart.defaults.font.family = '-apple-system, Segoe UI, Roboto, sans-serif';
+
+// === 2. Mix FY 2025 (M USD) ===
+new Chart(document.getElementById('mixChart'),{
+  type:'doughnut',
+  data:{
+    labels:['Conda · MAP/MAP+','Conda · SPA (ácido superfosfórico)','Conda · ácido sulfúrico / otros','Arraias · ácido sulfúrico + fertilizante','Otros / corporate'],
+    datasets:[{
+      data:[295, 145, 65, 38, 15],
+      backgroundColor:['#22c55e','#86efac','#a855f7','#3b82f6','#eab308'],
+      borderColor:'#11211a',borderWidth:3
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'right',labels:{padding:12,font:{size:12},boxWidth:14}},
+      tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed} M$ (${fmtCAD(c.parsed*1e6)}) · ${(c.parsed/558*100).toFixed(1)}%`}}
+    }
+  }
+});
+
+// === 2. Revenue evolution ===
+new Chart(document.getElementById('revChart'),{
+  type:'bar',
+  data:{
+    labels:['2021','2022','2023','2024','2025','2026E'],
+    datasets:[{
+      label:'Revenue anual (M USD)',
+      data:[413, 593, 466, 491, 558, 580],
+      backgroundColor:['#3b82f6','#a855f7','#ef4444','#3b82f6','#22c55e','rgba(34,197,94,.5)'],
+      borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:c=>` ${c.parsed.y} M USD  ·  ${fmtCAD(c.parsed.y*1e6)}`}}
+    },
+    scales:{y:{grid:{color:'#1f3a2e'},ticks:{callback:v=>v+' M$'}},x:{grid:{display:false}}}
+  }
+});
+
+// === 4. Macro interactive ===
+const macroData = {
+  '1M':{
+    labels:['12 Abr','18','22','26','30 Abr','4 May (Q1)','8 May','12 May'],
+    map:[680, 695, 705, 715, 720, 720, 720, 720],
+    ifos:[3.85, 3.92, 3.88, 3.95, 3.80, 3.25, 2.80, 2.67],
+    fx:[1.380, 1.378, 1.375, 1.372, 1.370, 1.368, 1.367, 1.367]
+  },
+  '3M':{
+    labels:['Feb','Mar 26','Abr','May 26'],
+    map:[650, 690, 710, 720],
+    ifos:[3.80, 4.50, 3.85, 2.67],
+    fx:[1.395, 1.382, 1.380, 1.367]
+  },
+  '6M':{
+    labels:['Nov 25','Dic','Ene 26','Feb','Mar','Abr','May'],
+    map:[620, 635, 645, 650, 690, 710, 720],
+    ifos:[3.10, 3.30, 3.55, 3.80, 4.50, 3.85, 2.67],
+    fx:[1.405, 1.398, 1.395, 1.395, 1.382, 1.380, 1.367]
+  },
+  '1Y':{
+    labels:['May25','Jun','Jul','Ago','Sep','Oct','Nov','Dic','Ene26','Feb','Mar','Abr','May26'],
+    map:[640, 650, 645, 635, 625, 615, 620, 635, 645, 650, 690, 710, 720],
+    ifos:[3.20, 3.35, 3.40, 3.55, 3.45, 3.25, 3.10, 3.30, 3.55, 3.80, 4.50, 3.85, 2.67],
+    fx:[1.385, 1.388, 1.395, 1.400, 1.402, 1.408, 1.405, 1.398, 1.395, 1.395, 1.382, 1.380, 1.367]
+  },
+  '3Y':{
+    labels:['May23','Sep','Ene24','May24','Sep','Ene25','May25','Sep','Ene26','May26'],
+    map:[530, 510, 540, 590, 600, 620, 640, 625, 645, 720],
+    ifos:[1.10, 1.45, 1.85, 2.50, 2.95, 3.10, 3.20, 3.45, 3.55, 2.67],
+    fx:[1.355, 1.360, 1.355, 1.370, 1.380, 1.420, 1.385, 1.402, 1.395, 1.367]
+  },
+  '5Y':{
+    labels:['May21','Ene22','May22','Ene23','May23','Ene24','May24','Ene25','May25','Ene26','May26'],
+    map:[480, 720, 840, 580, 530, 540, 590, 620, 640, 645, 720],
+    ifos:[0.85, 1.55, 2.20, 1.40, 1.10, 1.85, 2.50, 3.10, 3.20, 3.55, 2.67],
+    fx:[1.215, 1.265, 1.285, 1.330, 1.355, 1.355, 1.370, 1.420, 1.385, 1.395, 1.367]
+  }
+};
+const ctx4 = document.getElementById('macroChart');
+let macroChart;
+function renderMacro(range){
+  const d = macroData[range];
+  const base = (arr)=>arr.map(v=>v/arr[0]*100);
+  if(macroChart) macroChart.destroy();
+  macroChart = new Chart(ctx4,{
+    type:'line',
+    data:{labels:d.labels,datasets:[
+      {label:'MAP NOLA (rebased 100)',data:base(d.map),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.08)',tension:.3,fill:true,borderWidth:2.5,pointRadius:3},
+      {label:'Itafos IFOS.V (rebased 100)',data:base(d.ifos),borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',tension:.3,fill:true,borderWidth:2.5,pointRadius:3},
+      {label:'USD/CAD (rebased 100)',data:base(d.fx),borderColor:'#a855f7',backgroundColor:'rgba(168,85,247,.06)',tension:.3,fill:false,borderWidth:2,borderDash:[4,4],pointRadius:2}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top'},
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toFixed(1)} (inicio rango = 100)`}}
+      },
+      scales:{y:{grid:{color:'#1f3a2e'},title:{display:true,text:'Índice rebased = 100'}},x:{grid:{display:false}}}
+    }
+  });
+}
+renderMacro('1Y');
+document.querySelectorAll('.tf-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tf-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  renderMacro(b.dataset.range);
+}));
+
+// === 5. Analyst targets ===
+new Chart(document.getElementById('analystChart'),{
+  type:'bar',
+  data:{
+    labels:['Mínimo','Medio bajo','Medio (consenso)','Medio alto','Máximo'],
+    datasets:[{
+      label:'Target (C$)',
+      data:[3.50, 4.00, 4.50, 5.00, 5.75],
+      backgroundColor:['#ef4444','#eab308','#22c55e','#3b82f6','#a855f7'],
+      borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:c=>` ${c.parsed.x.toFixed(2)} C$  ·  ${(c.parsed.x/FX_USD_CAD).toFixed(2)} USD  ·  ${((c.parsed.x/2.67-1)*100).toFixed(1)}% vs spot`}}
+    },
+    scales:{x:{grid:{color:'#1f3a2e'},ticks:{callback:v=>v+' C$'}},y:{grid:{display:false}}}
+  }
+});
+
+// === 6. Price chart 12M con MA50, MA200, Bollinger ===
+const priceData = [3.20, 3.35, 3.40, 3.55, 3.45, 3.25, 3.10, 3.30, 3.55, 3.80, 4.50, 3.85, 2.67];
+const labels6 = ['May25','Jun','Jul','Ago','Sep','Oct','Nov','Dic','Ene26','Feb','Mar','Abr','12May26'];
+const ma50 = [3.10, 3.25, 3.35, 3.45, 3.45, 3.35, 3.25, 3.20, 3.25, 3.45, 3.85, 3.95, 3.50];
+const ma200 = [2.80, 2.90, 3.00, 3.10, 3.20, 3.25, 3.25, 3.25, 3.30, 3.35, 3.40, 3.40, 3.30];
+const bbUp = priceData.map((p,i)=>ma50[i]+0.45);
+const bbDn = priceData.map((p,i)=>ma50[i]-0.45);
+
+new Chart(document.getElementById('priceChart'),{
+  type:'line',
+  data:{
+    labels:labels6,
+    datasets:[
+      {label:'Bollinger Upper',data:bbUp,borderColor:'rgba(168,85,247,.5)',borderDash:[2,2],borderWidth:1,pointRadius:0,fill:'+1',backgroundColor:'rgba(168,85,247,.04)'},
+      {label:'Bollinger Lower',data:bbDn,borderColor:'rgba(168,85,247,.5)',borderDash:[2,2],borderWidth:1,pointRadius:0,fill:false},
+      {label:'Precio Itafos (C$)',data:priceData,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',tension:.3,fill:false,borderWidth:3,pointRadius:4,pointBackgroundColor:'#86efac'},
+      {label:'MA50',data:ma50,borderColor:'#3b82f6',borderWidth:2,pointRadius:0,fill:false,tension:.3},
+      {label:'MA200',data:ma200,borderColor:'#eab308',borderWidth:2,pointRadius:0,fill:false,tension:.3,borderDash:[6,3]},
+      {label:'R1 (3,50)',data:Array(13).fill(3.50),borderColor:'rgba(239,68,68,.6)',borderDash:[8,4],borderWidth:1,pointRadius:0,fill:false},
+      {label:'S2 (2,30)',data:Array(13).fill(2.30),borderColor:'rgba(34,197,94,.6)',borderDash:[8,4],borderWidth:1,pointRadius:0,fill:false},
+      {label:'S3/SL (2,15)',data:Array(13).fill(2.15),borderColor:'rgba(239,68,68,.8)',borderDash:[2,2],borderWidth:1.5,pointRadius:0,fill:false}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'top',labels:{padding:10,font:{size:11}}},
+      tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toFixed(2)} C$  (${(c.parsed.y/FX_USD_CAD).toFixed(2)} USD)`}}
+    },
+    scales:{y:{grid:{color:'#1f3a2e'},ticks:{callback:v=>v.toFixed(2)+' C$'}},x:{grid:{display:false}}}
+  }
+});
+</script>
+</body>
+</html>
